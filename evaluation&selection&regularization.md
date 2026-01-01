@@ -142,25 +142,6 @@ Where:
 - $\hat{f}(x)$ is our estimated function
 - $\mathbb{E}[\cdot]$ denotes expectation over different training sets
 
-### Visual Illustration
-
-```
-High Bias (Underfitting)          Just Right          High Variance (Overfitting)
-                                                       
-    y |                          y |                    y |
-      |   •  •                     |   •  •               |   •
-      | •      •                   | •      •             | •
-      |•        •                  |•        •            |•    •
-      |    ___                     |    ___               |  •   •
-      |         •                  |         •            |     •  •
-      |•      •                    |•      •              |•   •    •
-      |   •  •                     |   •  •               |      •
-      |___________ x               |___________ x         |___________ x
-      
-   Model too simple             Good fit            Model too complex
-   (straight line)          (captures trend)      (fits every point)
-```
-
 ### The Tradeoff
 
 As model complexity increases:
@@ -230,38 +211,6 @@ Degree 15: Train Error = 0.0012, Test Error = 3.2451 # High Variance
 ### Learning Curves: A Visual Diagnostic Tool
 
 **Learning curves** plot training and test error as a function of training set size.
-
-#### High Bias Learning Curve
-
-```
-Error
-  |
-  |  _____________________ Test Error
-  | /
-  |/_____________________ Training Error
-  |
-  |__________________________ # Training Examples
-  
-Both errors converge to a high value
-Adding more data won't help much!
-```
-
-#### High Variance Learning Curve
-
-```
-Error
-  |
-  |            Test Error
-  |          /
-  |        /
-  |      /
-  |    /_____ Training Error
-  |  /
-  |/__________________________ # Training Examples
-  
-Large gap between curves
-Adding more data will help!
-```
 
 ### Code Example: Plotting Learning Curves
 
