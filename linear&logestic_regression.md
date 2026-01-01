@@ -189,120 +189,22 @@ graph TD
 
 ```python
 import numpy as np
-import matplotlib.pyplot as plt
 
-class LinearRegression:
-    def __init__(self, learning_rate=0.01, iterations=1000):
-        """
-        Initialize Linear Regression model
-        
-        Parameters:
-        -----------
-        learning_rate : float
-            Step size for gradient descent
-        iterations : int
-            Number of iterations for gradient descent
-        """
-        self.lr = learning_rate
-        self.iterations = iterations
-        self.theta = None
-        self.cost_history = []
-    
-    def fit(self, X, y):
-        """
-        Train the model using gradient descent
-        
-        Parameters:
-        -----------
-        X : numpy array of shape (m, n)
-            Training features
-        y : numpy array of shape (m, 1)
-            Target values
-        """
-        # Add bias term (column of ones)
-        m, n = X.shape
-        X_b = np.c_[np.ones((m, 1)), X]  # Add x0 = 1 to each instance
-        
-        # Initialize parameters
-        self.theta = np.random.randn(n + 1, 1)
-        
-        # Gradient descent
-        for iteration in range(self.iterations):
-            # Predictions
-            predictions = X_b.dot(self.theta)
-            
-            # Calculate error
-            errors = predictions - y
-            
-            # Calculate cost
-            cost = (1/(2*m)) * np.sum(errors**2)
-            self.cost_history.append(cost)
-            
-            # Calculate gradients
-            gradients = (1/m) * X_b.T.dot(errors)
-            
-            # Update parameters
-            self.theta -= self.lr * gradients
-            
-            # Print progress every 100 iterations
-            if iteration % 100 == 0:
-                print(f"Iteration {iteration}: Cost = {cost:.4f}")
-    
-    def predict(self, X):
-        """
-        Make predictions on new data
-        
-        Parameters:
-        -----------
-        X : numpy array of shape (m, n)
-            Features to predict
-            
-        Returns:
-        --------
-        predictions : numpy array of shape (m, 1)
-        """
-        X_b = np.c_[np.ones((X.shape[0], 1)), X]
-        return X_b.dot(self.theta)
-    
-    def plot_cost_history(self):
-        """Plot the cost function over iterations"""
-        plt.figure(figsize=(10, 6))
-        plt.plot(range(len(self.cost_history)), self.cost_history, 'b-')
-        plt.xlabel('Iteration')
-        plt.ylabel('Cost J(θ)')
-        plt.title('Cost Function Convergence')
-        plt.grid(True)
-        plt.show()
+X = np.array([1, 2, 3, 4])
+y = np.array([2, 4, 6, 8])
 
-# Example usage
-if __name__ == "__main__":
-    # Generate synthetic data
-    np.random.seed(42)
-    X = 2 * np.random.rand(100, 1)
-    y = 4 + 3 * X + np.random.randn(100, 1)
-    
-    # Train model
-    model = LinearRegression(learning_rate=0.1, iterations=1000)
-    model.fit(X, y)
-    
-    # Make predictions
-    X_new = np.array([[0], [2]])
-    predictions = model.predict(X_new)
-    
-    # Visualize results
-    plt.figure(figsize=(10, 6))
-    plt.scatter(X, y, alpha=0.5, label='Training data')
-    plt.plot(X_new, predictions, 'r-', linewidth=2, label='Predictions')
-    plt.xlabel('X')
-    plt.ylabel('y')
-    plt.title('Linear Regression Fit')
-    plt.legend()
-    plt.grid(True)
-    plt.show()
-    
-    print(f"\nLearned parameters:")
-    print(f"θ₀ (bias) = {model.theta[0][0]:.4f}")
-    print(f"θ₁ (slope) = {model.theta[1][0]:.4f}")
+w, b = 0.0, 0.0
+alpha = 0.01
+m = len(X)
+
+for _ in range(1000):
+    y_hat = w * X + b
+    dw = (1/m) * np.sum((y_hat - y) * X)
+    db = (1/m) * np.sum(y_hat - y)
+    w -= alpha * dw
+    b -= alpha * db
+
+print(w, b)
 ```
 
 ---
@@ -330,19 +232,6 @@ $$g(z) = \frac{1}{1 + e^{-z}}$$
 - $g(z) \to 1$ as $z \to \infty$
 - $g(z) \to 0$ as $z \to -\infty$
 - Derivative: $g'(z) = g(z)(1 - g(z))$
-
-```mermaid
-graph LR
-    A[Input Features<br/>x₁, x₂, ..., xₙ] --> B[Linear Combination<br/>z = θ₀ + θ₁x₁ + ... + θₙxₙ]
-    B --> C[Sigmoid Function<br/>σz = 1/1+e⁻ᶻ]
-    C --> D[Probability<br/>Pŷ=1|x ∈ 0,1]
-    D --> E{Decision<br/>Threshold = 0.5}
-    E -->|≥ 0.5| F[Class 1]
-    E -->|< 0.5| G[Class 0]
-    
-    style F fill:#4CAF50
-    style G fill:#f44336
-```
 
 ### Decision Boundary
 
@@ -398,175 +287,26 @@ Where $g$ is the sigmoid function applied element-wise.
 
 ```python
 import numpy as np
-import matplotlib.pyplot as plt
 
-class LogisticRegression:
-    def __init__(self, learning_rate=0.01, iterations=1000):
-        """
-        Initialize Logistic Regression model
-        
-        Parameters:
-        -----------
-        learning_rate : float
-            Step size for gradient descent
-        iterations : int
-            Number of iterations for gradient descent
-        """
-        self.lr = learning_rate
-        self.iterations = iterations
-        self.theta = None
-        self.cost_history = []
-    
-    def sigmoid(self, z):
-        """
-        Sigmoid activation function
-        
-        Parameters:
-        -----------
-        z : numpy array
-            Linear combination of inputs and weights
-            
-        Returns:
-        --------
-        Sigmoid activation values
-        """
-        return 1 / (1 + np.exp(-z))
-    
-    def fit(self, X, y):
-        """
-        Train the model using gradient descent
-        
-        Parameters:
-        -----------
-        X : numpy array of shape (m, n)
-            Training features
-        y : numpy array of shape (m, 1)
-            Target values (0 or 1)
-        """
-        # Add bias term
-        m, n = X.shape
-        X_b = np.c_[np.ones((m, 1)), X]
-        
-        # Initialize parameters
-        self.theta = np.zeros((n + 1, 1))
-        
-        # Gradient descent
-        for iteration in range(self.iterations):
-            # Predictions (probabilities)
-            z = X_b.dot(self.theta)
-            predictions = self.sigmoid(z)
-            
-            # Calculate cost (log loss)
-            epsilon = 1e-15  # To prevent log(0)
-            cost = -(1/m) * np.sum(
-                y * np.log(predictions + epsilon) + 
-                (1 - y) * np.log(1 - predictions + epsilon)
-            )
-            self.cost_history.append(cost)
-            
-            # Calculate gradients
-            gradients = (1/m) * X_b.T.dot(predictions - y)
-            
-            # Update parameters
-            self.theta -= self.lr * gradients
-            
-            # Print progress
-            if iteration % 100 == 0:
-                print(f"Iteration {iteration}: Cost = {cost:.4f}")
-    
-    def predict_proba(self, X):
-        """
-        Predict probabilities for class 1
-        
-        Parameters:
-        -----------
-        X : numpy array of shape (m, n)
-            Features to predict
-            
-        Returns:
-        --------
-        probabilities : numpy array of shape (m, 1)
-        """
-        X_b = np.c_[np.ones((X.shape[0], 1)), X]
-        return self.sigmoid(X_b.dot(self.theta))
-    
-    def predict(self, X, threshold=0.5):
-        """
-        Predict class labels
-        
-        Parameters:
-        -----------
-        X : numpy array of shape (m, n)
-            Features to predict
-        threshold : float
-            Classification threshold (default 0.5)
-            
-        Returns:
-        --------
-        predictions : numpy array of shape (m, 1)
-        """
-        return (self.predict_proba(X) >= threshold).astype(int)
-    
-    def plot_cost_history(self):
-        """Plot the cost function over iterations"""
-        plt.figure(figsize=(10, 6))
-        plt.plot(range(len(self.cost_history)), self.cost_history, 'b-')
-        plt.xlabel('Iteration')
-        plt.ylabel('Cost J(θ)')
-        plt.title('Log Loss Convergence')
-        plt.grid(True)
-        plt.show()
+X = np.array([[1], [2], [3], [4]])
+y = np.array([0, 0, 1, 1])
 
-# Example usage
-if __name__ == "__main__":
-    # Generate synthetic binary classification data
-    np.random.seed(42)
-    
-    # Class 0
-    X0 = np.random.randn(50, 2) + np.array([2, 2])
-    y0 = np.zeros((50, 1))
-    
-    # Class 1
-    X1 = np.random.randn(50, 2) + np.array([5, 5])
-    y1 = np.ones((50, 1))
-    
-    # Combine data
-    X = np.vstack([X0, X1])
-    y = np.vstack([y0, y1])
-    
-    # Train model
-    model = LogisticRegression(learning_rate=0.1, iterations=1000)
-    model.fit(X, y)
-    
-    # Make predictions
-    predictions = model.predict(X)
-    accuracy = np.mean(predictions == y)
-    print(f"\nAccuracy: {accuracy * 100:.2f}%")
-    
-    # Visualize decision boundary
-    plt.figure(figsize=(10, 6))
-    
-    # Plot data points
-    plt.scatter(X[y.ravel()==0, 0], X[y.ravel()==0, 1], 
-                c='blue', marker='o', label='Class 0', alpha=0.5)
-    plt.scatter(X[y.ravel()==1, 0], X[y.ravel()==1, 1], 
-                c='red', marker='s', label='Class 1', alpha=0.5)
-    
-    # Plot decision boundary
-    x1_min, x1_max = X[:, 0].min() - 1, X[:, 0].max() + 1
-    x2_min, x2_max = X[:, 1].min() - 1, X[:, 1].max() + 1
-    xx1, xx2 = np.meshgrid(np.linspace(x1_min, x1_max, 100),
-                           np.linspace(x2_min, x2_max, 100))
-    Z = model.predict(np.c_[xx1.ravel(), xx2.ravel()])
-    Z = Z.reshape(xx1.shape)
-    plt.contour(xx1, xx2, Z, levels=[0.5], colors='green', linewidths=2)
-    
-    plt.xlabel('Feature 1')
-    plt.ylabel('Feature 2')
-    plt.title('Logistic Regression Decision Boundary')
-    plt.legend()
-    plt.grid(True)
-    plt.show()
+w, b = 0.0, 0.0
+alpha = 0.1
+m = len(X)
+
+def sigmoid(z):
+    return 1 / (1 + np.exp(-z))
+
+for _ in range(1000):
+    z = X.dot(w) + b
+    y_hat = sigmoid(z)
+    dw = (1/m) * np.sum((y_hat - y) * X.flatten())
+    db = (1/m) * np.sum(y_hat - y)
+    w -= alpha * dw
+    b -= alpha * db
+
+print(w, b)
 ```
 
 ---
