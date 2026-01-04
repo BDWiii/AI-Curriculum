@@ -17,11 +17,11 @@ Let's define our notation for multiple features:
 
 With multiple features, our hypothesis function changes from a simple line equation to a linear combination of all features:
 
-$$ h_\theta(x) = \theta_0 + \theta_1x_1 + \theta_2x_2 + \dots + \theta_nx_n $$
+$$ h_w(x) = w_0 + w_1x_1 + w_2x_2 + \dots + w_nx_n $$
 
 For convenience, we define $x_0 = 1$ (intercept term). This allows us to write:
 
-$$ h_\theta(x) = \theta_0x_0 + \theta_1x_1 + \dots + \theta_nx_n $$
+$$ h_w(x) = w_0x_0 + w_1x_1 + \dots + w_nx_n $$
 
 ---
 
@@ -30,13 +30,13 @@ $$ h_\theta(x) = \theta_0x_0 + \theta_1x_1 + \dots + \theta_nx_n $$
 Vectorization is the process of converting an algorithm that operates on a single value at a time into an operation that operates on a set of values (vectors) at once.
 
 ### The Vector View
-Instead of treating $\theta$ and $x$ as separate lists of numbers, we view them as **Vectors**:
+Instead of treating $w$ and $x$ as separate lists of numbers, we view them as **Vectors**:
 
-$$ x = \begin{bmatrix} x_0 \\ x_1 \\ \vdots \\ x_n \end{bmatrix} \in \mathbb{R}^{n+1} \quad \text{and} \quad \theta = \begin{bmatrix} \theta_0 \\ \theta_1 \\ \vdots \\ \theta_n \end{bmatrix} \in \mathbb{R}^{n+1} $$
+$$ x = \begin{bmatrix} x_0 \\ x_1 \\ \vdots \\ x_n \end{bmatrix} \in \mathbb{R}^{n+1} \quad \text{and} \quad w = \begin{bmatrix} w_0 \\ w_1 \\ \vdots \\ w_n \end{bmatrix} \in \mathbb{R}^{n+1} $$
 
 Using linear algebra, our hypothesis function typically becomes a dot product:
 
-$$ h_\theta(x) = \theta^T x $$
+$$ h_w(x) = w^T x $$
 
 ### Why Vectorize?
 1.  **Code Conciseness**: Mathematical notation translates directly to code.
@@ -53,13 +53,13 @@ import time
 # Create two large vectors with 1 million elements
 n = 1000000
 x = np.random.rand(n)
-theta = np.random.rand(n)
+w = np.random.rand(n)
 
 # --- 1. Non-Vectorized Version (Explicit Loop) ---
 start_time = time.time()
 prediction_loop = 0
 for i in range(n):
-    prediction_loop += theta[i] * x[i]
+    prediction_loop += w[i] * x[i]
 end_time = time.time()
 
 print(f"Loop Result: {prediction_loop}")
@@ -67,7 +67,7 @@ print(f"Loop Time: {end_time - start_time:.6f} seconds")
 
 # --- 2. Vectorized Version ---
 start_time = time.time()
-prediction_vector = np.dot(theta, x) # This happens in parallel on the CPU
+prediction_vector = np.dot(w, x) # This happens in parallel on the CPU
 end_time = time.time()
 
 print(f"Vectorized Result: {prediction_vector}")
@@ -83,7 +83,7 @@ print(f"Vectorized Time: {end_time - start_time:.6f} seconds")
 Feature scaling is a method used to normalize the range of independent variables or features of data.
 
 ### Why do we need it?
-If you have one feature $x_1$ (e.g., size of house) ranging from 0 to 2000, and another feature $x_2$ (e.g., number of bedrooms) ranging from 1 to 5, the cost function $J(\theta)$ contours will be skewed (elliptical).
+If you have one feature $x_1$ (e.g., size of house) ranging from 0 to 2000, and another feature $x_2$ (e.g., number of bedrooms) ranging from 1 to 5, the cost function $J(w)$ contours will be skewed (elliptical).
 
 - **Without Scaling**: Gradient Descent will oscillate and take a long time to reach the global minimum.
 - **With Scaling**: The contours become more circular, allowing Gradient Descent to take a direct path to the minimum.
@@ -130,16 +130,16 @@ print(f"Z-Score Normalized: {z_scored}")
 Take your time to think through these problems.
 
 ### Problem 1: Vector Dimension
-**Question**: You implement linear regression with $n=5$ features ($x_1$ to $x_5$). You include the intercept term $x_0 = 1$. What is the dimension of the parameter vector $\theta$?
+**Question**: You implement linear regression with $n=5$ features ($x_1$ to $x_5$). You include the intercept term $x_0 = 1$. What is the dimension of the parameter vector $w$?
 <details>
 <summary>Click to reveal Solution</summary>
-The dimension is $n+1 = 6$. The vector is $[\theta_0, \theta_1, \theta_2, \theta_3, \theta_4, \theta_5]$.
+The dimension is $n+1 = 6$. The vector is $[w_0, w_1, w_2, w_3, w_4, w_5]$.
 </details>
 
 ---
 
 ### Problem 2: Computational Logic
-**Question**: Why does the vectorized implementation `np.dot(theta, x)` run faster than a `for` loop in Python?
+**Question**: Why does the vectorized implementation `np.dot(w, x)` run faster than a `for` loop in Python?
 <details>
 <summary>Click to reveal Solution</summary>
 Python loops are interpreted and generally slow. The NumPy library calls optimized, pre-compiled C/C++ functions and utilizes SIMD (Single Instruction, Multiple Data) hardware capabilities to perform mathematical operations on arrays in parallel.

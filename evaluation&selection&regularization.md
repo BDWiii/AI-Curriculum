@@ -77,10 +77,10 @@ print(f"Test set size: {len(X_test)}")
 ### Computing Training and Test Error
 
 **Training Error** (also called empirical risk):
-$$J_{train}(\theta) = \frac{1}{2m_{train}} \sum_{i=1}^{m_{train}} (h_\theta(x^{(i)}) - y^{(i)})^2$$
+$$J_{train}(w) = \frac{1}{2m_{train}} \sum_{i=1}^{m_{train}} (h_w(x^{(i)}) - y^{(i)})^2$$
 
 **Test Error** (estimate of generalization error):
-$$J_{test}(\theta) = \frac{1}{2m_{test}} \sum_{i=1}^{m_{test}} (h_\theta(x^{(i)}_{test}) - y^{(i)}_{test})^2$$
+$$J_{test}(w) = \frac{1}{2m_{test}} \sum_{i=1}^{m_{test}} (h_w(x^{(i)}_{test}) - y^{(i)}_{test})^2$$
 
 ### Code Example: Computing Errors
 
@@ -408,13 +408,13 @@ With regularization: "Fit the training data well, but keep the model simple!"
 
 **Cost Function:**
 
-$$J(\theta) = \frac{1}{2m} \sum_{i=1}^{m} (h_\theta(x^{(i)}) - y^{(i)})^2 + \lambda \sum_{j=1}^{n} \theta_j^2$$
+$$J(w) = \frac{1}{2m} \sum_{i=1}^{m} (h_w(x^{(i)}) - y^{(i)})^2 + \lambda \sum_{j=1}^{n} w_j^2$$
 
 Where:
 - First term: Original cost (fitting error)
 - Second term: Regularization penalty (complexity penalty)
 - $\lambda$: Regularization parameter (controls strength)
-- Note: We typically don't regularize $\theta_0$ (the bias term)
+- Note: We typically don't regularize $w_0$ (the bias term)
 
 **Effect:** Shrinks all coefficients toward zero, but doesn't set them exactly to zero.
 
@@ -422,7 +422,7 @@ Where:
 
 **Cost Function:**
 
-$$J(\theta) = \frac{1}{2m} \sum_{i=1}^{m} (h_\theta(x^{(i)}) - y^{(i)})^2 + \lambda \sum_{j=1}^{n} |\theta_j|$$
+$$J(w) = \frac{1}{2m} \sum_{i=1}^{m} (h_w(x^{(i)}) - y^{(i)})^2 + \lambda \sum_{j=1}^{n} |w_j|$$
 
 **Effect:** Can set some coefficients exactly to zero (feature selection!).
 
@@ -430,7 +430,7 @@ $$J(\theta) = \frac{1}{2m} \sum_{i=1}^{m} (h_\theta(x^{(i)}) - y^{(i)})^2 + \lam
 
 **Cost Function:**
 
-$$J(\theta) = \frac{1}{2m} \sum_{i=1}^{m} (h_\theta(x^{(i)}) - y^{(i)})^2 + \lambda_1 \sum_{j=1}^{n} |\theta_j| + \lambda_2 \sum_{j=1}^{n} \theta_j^2$$
+$$J(w) = \frac{1}{2m} \sum_{i=1}^{m} (h_w(x^{(i)}) - y^{(i)})^2 + \lambda_1 \sum_{j=1}^{n} |w_j| + \lambda_2 \sum_{j=1}^{n} w_j^2$$
 
 **Effect:** Combines benefits of both Ridge and Lasso.
 
@@ -763,10 +763,10 @@ Your colleague suggests adding more training data. Another suggests increasing m
 
 **Q:** Consider Ridge regression with cost function:
 
-$$J(\theta) = \frac{1}{2m} \sum_{i=1}^{m} (h_\theta(x^{(i)}) - y^{(i)})^2 + \lambda \sum_{j=1}^{n} \theta_j^2$$
+$$J(w) = \frac{1}{2m} \sum_{i=1}^{m} (h_w(x^{(i)}) - y^{(i)})^2 + \lambda \sum_{j=1}^{n} w_j^2$$
 
 You increase λ from 0.1 to 100. What happens to:
-1. The magnitude of coefficients θ?
+1. The magnitude of coefficients w?
 2. Training error?
 3. The bias-variance tradeoff?
 
@@ -775,7 +775,7 @@ You increase λ from 0.1 to 100. What happens to:
 
 **Answer:**
 
-1. **Magnitude of coefficients θ:**
+1. **Magnitude of coefficients w:**
    - **Decreases significantly** (shrinks toward zero)
    - The large λ heavily penalizes large coefficient values
    - Model is forced to use smaller weights
@@ -792,7 +792,7 @@ You increase λ from 0.1 to 100. What happens to:
    
 **Mathematical Intuition:**
 - When λ = 0: Minimize only fitting error → potential overfitting
-- When λ → ∞: θ → 0 for all features → extreme underfitting
+- When λ → ∞: w → 0 for all features → extreme underfitting
 - Optimal λ: Balance between the two
 
 **Practical Note:** This is why we use cross-validation to find optimal λ!

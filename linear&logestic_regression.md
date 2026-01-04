@@ -92,20 +92,20 @@ Linear Regression is a supervised learning algorithm used to predict a **continu
 
 For a single feature (simple linear regression):
 
-$$h_\theta(x) = \theta_0 + \theta_1 x$$
+$$h_w(x) = w_0 + w_1 x$$
 
 For multiple features (multiple linear regression):
 
-$$h_\theta(x) = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + ... + \theta_n x_n$$
+$$h_w(x) = w_0 + w_1 x_1 + w_2 x_2 + ... + w_n x_n$$
 
 In vectorized form:
 
-$$h_\theta(x) = \theta^T x$$
+$$h_w(x) = w^T x$$
 
 Where:
-- $h_\theta(x)$ is the predicted output (hypothesis)
-- $\theta_0$ is the bias term (y-intercept)
-- $\theta_1, \theta_2, ..., \theta_n$ are the weights (slopes)
+- $h_w(x)$ is the predicted output (hypothesis)
+- $w_0$ is the bias term (y-intercept)
+- $w_1, w_2, ..., w_n$ are the weights (slopes)
 - $x_1, x_2, ..., x_n$ are the input features
 
 ### Intuition
@@ -114,7 +114,7 @@ Think of linear regression as fitting a straight line (in 2D) or hyperplane (in 
 
 ```mermaid
 graph LR
-    A[Input Features<br/>x₁, x₂, ..., xₙ] --> B[Weighted Sum<br/>θ₀ + θ₁x₁ + ... + θₙxₙ]
+    A[Input Features<br/>x₁, x₂, ..., xₙ] --> B[Weighted Sum<br/>w₀ + w₁x₁ + ... + wₙxₙ]
     B --> C[Prediction<br/>ŷ continuous value]
     D[True Value y] -.Compare.- C
     C -.Error.- E[Cost Function<br/>MSE]
@@ -124,19 +124,19 @@ graph LR
 
 **Formula**:
 
-$$J(\theta) = \frac{1}{2m} \sum_{i=1}^{m} (h_\theta(x^{(i)}) - y^{(i)})^2$$
+$$J(w) = \frac{1}{2m} \sum_{i=1}^{m} (h_w(x^{(i)}) - y^{(i)})^2$$
 
 Where:
-- $J(\theta)$ is the cost function
+- $J(w)$ is the cost function
 - $m$ is the number of training examples
-- $h_\theta(x^{(i)})$ is the predicted value for the i-th example
+- $h_w(x^{(i)})$ is the predicted value for the i-th example
 - $y^{(i)}$ is the actual value for the i-th example
 
 **Intuition**:
 - MSE measures the average squared difference between predictions and actual values
 - Squaring ensures positive values and penalizes larger errors more heavily
 - The factor $\frac{1}{2m}$ is for mathematical convenience (simplifies the derivative)
-- **Goal**: Find $\theta$ values that minimize $J(\theta)$
+- **Goal**: Find $w$ values that minimize $J(w)$
 
 ### Gradient Descent Algorithm
 
@@ -144,29 +144,29 @@ Gradient descent is an optimization algorithm used to minimize the cost function
 
 **Update Rule**:
 
-$$\theta_j := \theta_j - \alpha \frac{\partial}{\partial \theta_j} J(\theta)$$
+$$w_j := w_j - \alpha \frac{\partial}{\partial w_j} J(w)$$
 
 For linear regression, the partial derivative is:
 
-$$\frac{\partial}{\partial \theta_j} J(\theta) = \frac{1}{m} \sum_{i=1}^{m} (h_\theta(x^{(i)}) - y^{(i)}) x_j^{(i)}$$
+$$\frac{\partial}{\partial w_j} J(w) = \frac{1}{m} \sum_{i=1}^{m} (h_w(x^{(i)}) - y^{(i)}) x_j^{(i)}$$
 
 **Complete Update Formula**:
 
-$$\theta_j := \theta_j - \alpha \frac{1}{m} \sum_{i=1}^{m} (h_\theta(x^{(i)}) - y^{(i)}) x_j^{(i)}$$
+$$w_j := w_j - \alpha \frac{1}{m} \sum_{i=1}^{m} (h_w(x^{(i)}) - y^{(i)}) x_j^{(i)}$$
 
 **Vectorized Form**:
 
-$$\theta := \theta - \alpha \frac{1}{m} X^T (X\theta - y)$$
+$$w := w - \alpha \frac{1}{m} X^T (Xw - y)$$
 
 ```mermaid
 graph TD
-    A[Initialize θ randomly] --> B[Calculate predictions<br/>h_θx]
-    B --> C[Compute cost J_θ]
-    C --> D[Calculate gradients<br/>∂J/∂θ]
-    D --> E[Update parameters<br/>θ := θ - α∇J]
+    A[Initialize w randomly] --> B[Calculate predictions<br/>h_wx]
+    B --> C[Compute cost J_w]
+    C --> D[Calculate gradients<br/>∂J/∂w]
+    D --> E[Update parameters<br/>w := w - α∇J]
     E --> F{Converged?}
     F -->|No| B
-    F -->|Yes| G[Optimal θ found!]
+    F -->|Yes| G[Optimal w found!]
     
     style G fill:#4CAF50
 ```
@@ -220,7 +220,7 @@ Logistic Regression is a supervised learning algorithm used for **binary classif
 
 For logistic regression, we want outputs between 0 and 1 (probabilities), so we use the **sigmoid function**:
 
-$$h_\theta(x) = g(\theta^T x) = \frac{1}{1 + e^{-\theta^T x}}$$
+$$h_w(x) = g(w^T x) = \frac{1}{1 + e^{-w^T x}}$$
 
 Where $g(z)$ is the sigmoid (logistic) function:
 
@@ -235,11 +235,11 @@ $$g(z) = \frac{1}{1 + e^{-z}}$$
 
 ### Decision Boundary
 
-The decision boundary is where $h_\theta(x) = 0.5$, which occurs when $\theta^T x = 0$.
+The decision boundary is where $h_w(x) = 0.5$, which occurs when $w^T x = 0$.
 
 **Prediction Rule**:
-- Predict $y = 1$ if $h_\theta(x) \geq 0.5$ (i.e., $\theta^T x \geq 0$)
-- Predict $y = 0$ if $h_\theta(x) < 0.5$ (i.e., $\theta^T x < 0$)
+- Predict $y = 1$ if $h_w(x) \geq 0.5$ (i.e., $w^T x \geq 0$)
+- Predict $y = 0$ if $h_w(x) < 0.5$ (i.e., $w^T x < 0$)
 
 ### Cost Function (Log Loss / Binary Cross-Entropy)
 
@@ -247,14 +247,14 @@ We cannot use MSE for logistic regression because it would be non-convex (multip
 
 **Formula**:
 
-$$J(\theta) = -\frac{1}{m} \sum_{i=1}^{m} \left[ y^{(i)} \log(h_\theta(x^{(i)})) + (1 - y^{(i)}) \log(1 - h_\theta(x^{(i)})) \right]$$
+$$J(w) = -\frac{1}{m} \sum_{i=1}^{m} \left[ y^{(i)} \log(h_w(x^{(i)})) + (1 - y^{(i)}) \log(1 - h_w(x^{(i)})) \right]$$
 
 **Intuition**:
-- When $y = 1$: Cost = $-\log(h_\theta(x))$
+- When $y = 1$: Cost = $-\log(h_w(x))$
   - If prediction is close to 1: Very low cost
   - If prediction is close to 0: Very high cost (approaches infinity)
   
-- When $y = 0$: Cost = $-\log(1 - h_\theta(x))$
+- When $y = 0$: Cost = $-\log(1 - h_w(x))$
   - If prediction is close to 0: Very low cost
   - If prediction is close to 1: Very high cost (approaches infinity)
 
@@ -267,19 +267,19 @@ This cost function heavily penalizes wrong predictions while being convex (singl
 
 **Update Rule** (same form as linear regression!):
 
-$$\theta_j := \theta_j - \alpha \frac{\partial}{\partial \theta_j} J(\theta)$$
+$$w_j := w_j - \alpha \frac{\partial}{\partial w_j} J(w)$$
 
 The partial derivative is:
 
-$$\frac{\partial}{\partial \theta_j} J(\theta) = \frac{1}{m} \sum_{i=1}^{m} (h_\theta(x^{(i)}) - y^{(i)}) x_j^{(i)}$$
+$$\frac{\partial}{\partial w_j} J(w) = \frac{1}{m} \sum_{i=1}^{m} (h_w(x^{(i)}) - y^{(i)}) x_j^{(i)}$$
 
 **Complete Update Formula**:
 
-$$\theta_j := \theta_j - \alpha \frac{1}{m} \sum_{i=1}^{m} (h_\theta(x^{(i)}) - y^{(i)}) x_j^{(i)}$$
+$$w_j := w_j - \alpha \frac{1}{m} \sum_{i=1}^{m} (h_w(x^{(i)}) - y^{(i)}) x_j^{(i)}$$
 
 **Vectorized Form**:
 
-$$\theta := \theta - \alpha \frac{1}{m} X^T (g(X\theta) - y)$$
+$$w := w - \alpha \frac{1}{m} X^T (g(Xw) - y)$$
 
 Where $g$ is the sigmoid function applied element-wise.
 
@@ -317,10 +317,10 @@ Let's understand how all these components interact in both algorithms:
 
 ```mermaid
 graph TD
-    A[1. Initialize Parameters θ<br/>Random or zeros] --> B[2. Make Predictions<br/>Linear: θᵀx<br/>Logistic: σθᵀx]
+    A[1. Initialize Parameters w<br/>Random or zeros] --> B[2. Make Predictions<br/>Linear: wᵀx<br/>Logistic: σwᵀx]
     B --> C[3. Calculate Cost<br/>Linear: MSE<br/>Logistic: Log Loss]
-    C --> D[4. Compute Gradients<br/>∂J/∂θⱼ = 1/m ΣX error]
-    D --> E[5. Update Parameters<br/>θⱼ := θⱼ - α∇J]
+    C --> D[4. Compute Gradients<br/>∂J/∂wⱼ = 1/m ΣX error]
+    D --> E[5. Update Parameters<br/>wⱼ := wⱼ - α∇J]
     E --> F{6. Converged?<br/>Cost change < ε<br/>or Max iterations}
     F -->|No| B
     F -->|Yes| G[7. Optimal Model!<br/>Make predictions on new data]
@@ -341,12 +341,12 @@ graph TD
    - Feature scaling (normalize or standardize)
 
 #### 2. **Model Initialization**
-   - Initialize parameters $\theta$ (typically to small random values or zeros)
+   - Initialize parameters $w$ (typically to small random values or zeros)
    - Set hyperparameters (learning rate $\alpha$, iterations)
 
 #### 3. **Forward Propagation**
-   - **Linear Regression**: $h_\theta(x) = \theta^T x$
-   - **Logistic Regression**: $h_\theta(x) = \sigma(\theta^T x)$
+   - **Linear Regression**: $h_w(x) = w^T x$
+   - **Logistic Regression**: $h_w(x) = \sigma(w^T x)$
 
 #### 4. **Cost Calculation**
    - Measure how wrong predictions are
@@ -354,7 +354,7 @@ graph TD
    - **Logistic**: Log Loss penalizes confident wrong predictions severely
 
 #### 5. **Backward Propagation (Gradient Calculation)**
-   - Calculate $\frac{\partial J}{\partial \theta_j}$ for each parameter
+   - Calculate $\frac{\partial J}{\partial w_j}$ for each parameter
    - This tells us the direction of steepest ascent
    - We move in the opposite direction (descent)
 
@@ -364,7 +364,7 @@ graph TD
    - Repeat until convergence
 
 #### 7. **Prediction**
-   - Use learned $\theta$ to predict on new data
+   - Use learned $w$ to predict on new data
    - **Linear**: Direct output is prediction
    - **Logistic**: Apply threshold (typically 0.5) to probability
 
@@ -490,7 +490,7 @@ def compare_learning_rates(X, y, learning_rates, iterations=1000):
         # Store results
         results[lr] = {
             'final_cost': model.cost_history[-1],
-            'theta': model.theta,
+            'weights': model.weights,
             'cost_history': model.cost_history
         }
         
@@ -498,7 +498,7 @@ def compare_learning_rates(X, y, learning_rates, iterations=1000):
         plt.plot(model.cost_history, label=f'α = {lr}')
     
     plt.xlabel('Iteration')
-    plt.ylabel('Cost J(θ)')
+    plt.ylabel('Cost J(w)')
     plt.title('Learning Rate Comparison')
     plt.legend()
     plt.grid(True)
@@ -529,10 +529,10 @@ results = compare_learning_rates(X, y, learning_rates, iterations=500)
 **Challenge**: Derive the gradient of the cost function for linear regression.
 
 Given:
-- Cost function: $J(\theta) = \frac{1}{2m} \sum_{i=1}^{m} (h_\theta(x^{(i)}) - y^{(i)})^2$
-- Hypothesis: $h_\theta(x) = \theta^T x$
+- Cost function: $J(w) = \frac{1}{2m} \sum_{i=1}^{m} (h_w(x^{(i)}) - y^{(i)})^2$
+- Hypothesis: $h_w(x) = w^T x$
 
-Derive: $\frac{\partial J}{\partial \theta_j}$
+Derive: $\frac{\partial J}{\partial w_j}$
 
 **Steps to follow**:
 1. Substitute the hypothesis into the cost function
@@ -542,19 +542,19 @@ Derive: $\frac{\partial J}{\partial \theta_j}$
 <details>
 <summary>✅ Solution</summary>
 
-$$\frac{\partial J}{\partial \theta_j} = \frac{\partial}{\partial \theta_j} \left[ \frac{1}{2m} \sum_{i=1}^{m} (h_\theta(x^{(i)}) - y^{(i)})^2 \right]$$
+$$\frac{\partial J}{\partial w_j} = \frac{\partial}{\partial w_j} \left[ \frac{1}{2m} \sum_{i=1}^{m} (h_w(x^{(i)}) - y^{(i)})^2 \right]$$
 
 Apply chain rule:
 
-$$= \frac{1}{2m} \sum_{i=1}^{m} 2(h_\theta(x^{(i)}) - y^{(i)}) \cdot \frac{\partial}{\partial \theta_j} h_\theta(x^{(i)})$$
+$$= \frac{1}{2m} \sum_{i=1}^{m} 2(h_w(x^{(i)}) - y^{(i)}) \cdot \frac{\partial}{\partial w_j} h_w(x^{(i)})$$
 
-Since $h_\theta(x^{(i)}) = \sum_{k=0}^{n} \theta_k x_k^{(i)}$:
+Since $h_w(x^{(i)}) = \sum_{k=0}^{n} w_k x_k^{(i)}$:
 
-$$\frac{\partial}{\partial \theta_j} h_\theta(x^{(i)}) = x_j^{(i)}$$
+$$\frac{\partial}{\partial w_j} h_w(x^{(i)}) = x_j^{(i)}$$
 
 Therefore:
 
-$$= \frac{1}{m} \sum_{i=1}^{m} (h_\theta(x^{(i)}) - y^{(i)}) x_j^{(i)}$$
+$$= \frac{1}{m} \sum_{i=1}^{m} (h_w(x^{(i)}) - y^{(i)}) x_j^{(i)}$$
 
 This is exactly the gradient we use in our update rule!
 </details>
@@ -617,14 +617,14 @@ This is exactly the gradient we use in our update rule!
 **Problem**: A student implemented logistic regression but the cost is increasing instead of decreasing. Here's their code:
 
 ```python
-def buggy_gradient_descent(X, y, theta, alpha, iterations):
+def buggy_gradient_descent(X, y, w, alpha, iterations):
     m = len(y)
     for i in range(iterations):
-        z = X.dot(theta)
+        z = X.dot(w)
         predictions = 1 / (1 + np.exp(-z))
         errors = predictions - y
-        theta = theta + alpha * (1/m) * X.T.dot(errors)  # Bug here!
-    return theta
+        w = w + alpha * (1/m) * X.T.dot(errors)  # Bug here!
+    return w
 ```
 
 **Questions**:
@@ -635,7 +635,7 @@ def buggy_gradient_descent(X, y, theta, alpha, iterations):
 <details>
 <summary>✅ Answer</summary>
 
-1. **The bug**: The line `theta = theta + alpha * ...` should be `theta = theta - alpha * ...` (minus, not plus)
+1. **The bug**: The line `w = w + alpha * ...` should be `w = w - alpha * ...` (minus, not plus)
 
 2. **Why cost increases**: 
    - Gradient descent should move in the direction opposite to the gradient (downhill)
@@ -645,14 +645,14 @@ def buggy_gradient_descent(X, y, theta, alpha, iterations):
 
 3. **Fixed code**:
 ```python
-def fixed_gradient_descent(X, y, theta, alpha, iterations):
+def fixed_gradient_descent(X, y, w, alpha, iterations):
     m = len(y)
     for i in range(iterations):
-        z = X.dot(theta)
+        z = X.dot(w)
         predictions = 1 / (1 + np.exp(-z))
         errors = predictions - y
-        theta = theta - alpha * (1/m) * X.T.dot(errors)  # Fixed: minus sign
-    return theta
+        w = w - alpha * (1/m) * X.T.dot(errors)  # Fixed: minus sign
+    return w
 ```
 </details>
 
@@ -722,7 +722,7 @@ print(predictions)
 
 **Key insights**:
 - Polynomial features allow linear regression to fit non-linear relationships
-- This is still linear regression (linear in parameters $\theta$), not the features
+- This is still linear regression (linear in parameters $w$), not the features
 - Feature scaling becomes even more important with polynomial features
 - Be careful of overfitting with too many polynomial terms
 </details>
@@ -735,10 +735,10 @@ print(predictions)
 |--------|------------------|---------------------|
 | **Purpose** | Predict continuous values | Predict binary classes |
 | **Output Range** | $(-\infty, +\infty)$ | $(0, 1)$ (probability) |
-| **Hypothesis** | $h_\theta(x) = \theta^T x$ | $h_\theta(x) = \frac{1}{1 + e^{-\theta^T x}}$ |
+| **Hypothesis** | $h_w(x) = w^T x$ | $h_w(x) = \frac{1}{1 + e^{-w^T x}}$ |
 | **Cost Function** | Mean Squared Error (MSE) | Log Loss (Binary Cross-Entropy) |
-| **Cost Formula** | $\frac{1}{2m} \sum (h_\theta(x^{(i)}) - y^{(i)})^2$ | $-\frac{1}{m} \sum [y^{(i)} \log(h_\theta(x^{(i)})) + (1-y^{(i)}) \log(1-h_\theta(x^{(i)}))]$ |
-| **Gradient** | $\frac{1}{m} X^T (X\theta - y)$ | $\frac{1}{m} X^T (g(X\theta) - y)$ |
+| **Cost Formula** | $\frac{1}{2m} \sum (h_w(x^{(i)}) - y^{(i)})^2$ | $-\frac{1}{m} \sum [y^{(i)} \log(h_w(x^{(i)})) + (1-y^{(i)}) \log(1-h_w(x^{(i)}))]$ |
+| **Gradient** | $\frac{1}{m} X^T (Xw - y)$ | $\frac{1}{m} X^T (g(Xw) - y)$ |
 | **Examples** | House prices, temperature, sales | Spam detection, disease diagnosis, churn prediction |
 | **Evaluation Metrics** | MSE, RMSE, MAE, R² | Accuracy, Precision, Recall, F1, AUC-ROC |
 
