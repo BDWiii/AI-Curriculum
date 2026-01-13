@@ -291,6 +291,7 @@ print(rect.area()) # Output: 50
 - `'r'`: Read.
 - `'a'`: Append.
 
+![Read and Write](images/read-write-append.png)
 ### Code Snippet
 ```python
 # Writing
