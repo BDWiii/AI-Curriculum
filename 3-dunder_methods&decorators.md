@@ -551,31 +551,6 @@ print(divide(10, 0))  # Raises error
 # [LOG] divide failed with error: division by zero
 ```
 
-### Decorator with Parameters
-
-To create a decorator that accepts its own parameters, you need an extra level of nesting:
-
-```python
-def repeat(times):
-    """Decorator that repeats function execution"""
-    def decorator(func):
-        def wrapper(*args, **kwargs):
-            for _ in range(times):
-                result = func(*args, **kwargs)
-            return result
-        return wrapper
-    return decorator
-
-@repeat(times=3)
-def greet(name):
-    print(f"Hello, {name}!")
-
-greet("Alice")
-# Output:
-# Hello, Alice!
-# Hello, Alice!
-# Hello, Alice!
-```
 
 ### Built-in Decorators
 
@@ -627,7 +602,7 @@ print(MathUtils.multiply(3, 5)) # 15
 #### 3. `@classmethod` - Class Method
 
 A class method receives the class (not the instance) as the first argument.
-
+common use case - Creating factory methods or alternative constructors
 ```python
 class Person:
     count = 0
@@ -653,38 +628,6 @@ print(Person.get_count())  # Total persons created: 2
 p3 = Person.from_birth_year("Charlie", 2000)
 print(p3.name)  # Charlie (age 26)
 ```
-
-### Common Decorator Patterns
-
-```python
-# 1. Authentication decorator
-def require_auth(func):
-    def wrapper(user, *args, **kwargs):
-        if not user.get("is_authenticated"):
-            raise PermissionError("User must be authenticated")
-        return func(user, *args, **kwargs)
-    return wrapper
-
-# 2. Caching/Memoization decorator
-def memoize(func):
-    cache = {}
-    def wrapper(*args):
-        if args not in cache:
-            cache[args] = func(*args)
-        return cache[args]
-    return wrapper
-
-@memoize
-def fibonacci(n):
-    if n < 2:
-        return n
-    return fibonacci(n-1) + fibonacci(n-2)
-
-# Much faster due to caching!
-print(fibonacci(100))
-```
-
----
 
 ## OS Module Essentials
 
