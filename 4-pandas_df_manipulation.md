@@ -276,14 +276,6 @@ df['score'].fillna(df['score'].median(), inplace=True)
 # Fill with mode (categorical)
 df['category'].fillna(df['category'].mode()[0], inplace=True)
 
-# Forward fill (time series)
-df['temperature'].fillna(method='ffill', inplace=True)
-
-# Backward fill
-df['temperature'].fillna(method='bfill', inplace=True)
-
-# Interpolation (numerical sequences)
-df['value'].interpolate(method='linear', inplace=True)
 ```
 
 ### 2. Handling Duplicates
@@ -324,27 +316,6 @@ upper_bound = Q3 + 1.5 * IQR
 df_clean = df[(df['salary'] >= lower_bound) & (df['salary'] <= upper_bound)]
 ```
 
-#### **Detection using Z-score**
-
-```python
-from scipy import stats
-
-# Calculate Z-scores
-z_scores = np.abs(stats.zscore(df['salary']))
-
-# Remove rows where |z-score| > 3
-df_clean = df[z_scores < 3]
-```
-
-#### **Capping (Winsorization)**
-
-```python
-# Cap at 1st and 99th percentiles
-lower = df['salary'].quantile(0.01)
-upper = df['salary'].quantile(0.99)
-
-df['salary'] = df['salary'].clip(lower, upper)
-```
 
 ### 4. Data Type Conversion
 
