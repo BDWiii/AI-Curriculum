@@ -1260,7 +1260,8 @@ def clean_data(df):
     
     # 3. Remove income outliers using IQR
 
-    ![OUTLIERS IMAGE]("images/outliers.png")
+    ![OUTLIERS IMAGE](images/outliers.png)
+
 
     Q1 = df_clean['income'].quantile(0.25)
     Q3 = df_clean['income'].quantile(0.75)
