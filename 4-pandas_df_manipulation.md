@@ -1259,6 +1259,9 @@ def clean_data(df):
     df_clean.loc[(df_clean['age'] < 0) | (df_clean['age'] > 120), 'age'] = np.nan
     
     # 3. Remove income outliers using IQR
+
+    ![OUTLIERS IMAGE]("/images/outliers.png")
+
     Q1 = df_clean['income'].quantile(0.25)
     Q3 = df_clean['income'].quantile(0.75)
     IQR = Q3 - Q1
