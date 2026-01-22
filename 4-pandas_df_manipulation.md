@@ -302,6 +302,7 @@ df_clean = df.drop_duplicates(keep='last')
 #### **Why it matters**: Outliers can skew model training and predictions.
 
 #### **Detection using IQR (Interquartile Range)**
+![outilers_illustration](images/outliers_illustration.png)
 
 ```python
 Q1 = df['salary'].quantile(0.25)
@@ -1259,8 +1260,6 @@ def clean_data(df):
     df_clean.loc[(df_clean['age'] < 0) | (df_clean['age'] > 120), 'age'] = np.nan
     
     # 3. Remove income outliers using IQR
-    # ![outilers_illustration](images/outliers_illustration.png)
-<img src="images/outliers_illustration.png">
 
     Q1 = df_clean['income'].quantile(0.25)
     Q3 = df_clean['income'].quantile(0.75)
