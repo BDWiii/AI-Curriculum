@@ -419,6 +419,8 @@ df['age_standardized'] = standardize(df['age'])
 - Standard deviation = 1
 - Values typically range from -3 to +3
 
+![normal](images/Normal_distribution_pdf.png)
+
 ### 3. Robust Scaling
 
 **Formula**: 
@@ -524,7 +526,7 @@ df_encoded = pd.get_dummies(df, columns=['color'])
 # Using sklearn
 from sklearn.preprocessing import OneHotEncoder
 
-encoder = OneHotEncoder(sparse=False)
+encoder = OneHotEncoder()
 encoded = encoder.fit_transform(df[['color']])
 
 # Create DataFrame with proper column names
@@ -575,55 +577,6 @@ df_encoded = encoder.fit_transform(df)
 Original: ['New York', 'London', 'Paris', 'Tokyo', 'Berlin']
 Binary encoding uses log2(5) ≈ 3 columns instead of 5 for one-hot
 ```
-
-### 4. Frequency Encoding
-
-**Use case**: When category frequency is informative
-
-```python
-# Calculate frequency
-freq_map = df['category'].value_counts(normalize=True).to_dict()
-
-# Apply encoding
-df['category_freq'] = df['category'].map(freq_map)
-```
-
-### 5. Target Encoding (Mean Encoding)
-
-**Use case**: When category relates to target variable
-
-**Formula**: 
-
-$$\text{Encoded}(c) = \frac{\sum_{i \in c} y_i}{|c|}$$
-
-Where $c$ is the category and $y_i$ are target values.
-
-```python
-# Calculate mean target per category
-target_mean = df.groupby('category')['target'].mean()
-
-# Map to DataFrame
-df['category_encoded'] = df['category'].map(target_mean)
-```
-
-> [!CAUTION]
-> **Target encoding can cause data leakage!** Always use cross-validation or separate train/test encoding.
-
-### Encoding Strategy Decision Tree
-
-```
-Is the data ordinal (has natural order)?
-├─ YES → Use Label Encoding
-└─ NO → Is it nominal?
-    ├─ Few categories (<10)?
-    │   └─ Use One-Hot Encoding
-    └─ Many categories (>10)?
-        ├─ Is frequency meaningful?
-        │   └─ Use Frequency Encoding
-        └─ Is target relationship strong?
-            └─ Use Target Encoding (with caution)
-```
-
 ---
 
 ## Time Series Handling
@@ -650,142 +603,6 @@ df['date'] = pd.to_datetime(df['date'], errors='coerce')
 # From components
 df['date'] = pd.to_datetime(df[['year', 'month', 'day']])
 ```
-
-### 2. Extracting Time Features
-
-```python
-# Set datetime as index
-df.set_index('date', inplace=True)
-
-# Extract components
-df['year'] = df.index.year
-df['month'] = df.index.month
-df['day'] = df.index.day
-df['day_of_week'] = df.index.dayofweek  # Monday=0, Sunday=6
-df['day_name'] = df.index.day_name()
-df['quarter'] = df.index.quarter
-df['week_of_year'] = df.index.isocalendar().week
-df['is_weekend'] = df.index.dayofweek.isin([5, 6]).astype(int)
-
-# Time components
-df['hour'] = df.index.hour
-df['minute'] = df.index.minute
-```
-
-### 3. Cyclical Encoding
-
-**Why?** December (12) and January (1) are close in time but far numerically.
-
-**Solution**: Sine-Cosine transformation
-
-**Formula**:
-
-$$\text{sin\_feature} = \sin\left(\frac{2\pi \times \text{value}}{\text{max\_value}}\right)$$
-
-$$\text{cos\_feature} = \cos\left(\frac{2\pi \times \text{value}}{\text{max\_value}}\right)$$
-
-```python
-# Month encoding (1-12)
-df['month_sin'] = np.sin(2 * np.pi * df['month'] / 12)
-df['month_cos'] = np.cos(2 * np.pi * df['month'] / 12)
-
-# Day of week encoding (0-6)
-df['day_sin'] = np.sin(2 * np.pi * df['day_of_week'] / 7)
-df['day_cos'] = np.cos(2 * np.pi * df['day_of_week'] / 7)
-
-# Hour encoding (0-23)
-df['hour_sin'] = np.sin(2 * np.pi * df['hour'] / 24)
-df['hour_cos'] = np.cos(2 * np.pi * df['hour'] / 24)
-```
-
-**Visualization**:
-```
-Month 12 (December): sin ≈ 0, cos ≈ 1
-Month 1 (January):   sin ≈ 0.5, cos ≈ 0.87
-→ Close in transformed space!
-```
-
-### 4. Time-based Aggregations
-
-```python
-# Resample to different frequencies
-daily_avg = df.resample('D').mean()      # Daily average
-weekly_sum = df.resample('W').sum()      # Weekly sum
-monthly_max = df.resample('M').max()     # Monthly maximum
-
-# Rolling windows
-df['rolling_mean_7d'] = df['value'].rolling(window=7).mean()
-df['rolling_std_30d'] = df['value'].rolling(window=30).std()
-
-# Expanding windows (cumulative)
-df['cumulative_sum'] = df['value'].expanding().sum()
-```
-
-### 5. Lag Features
-
-**Use case**: Past values predict future (e.g., yesterday's sales predict today's)
-
-```python
-# Create lag features
-df['value_lag1'] = df['value'].shift(1)   # Previous day
-df['value_lag7'] = df['value'].shift(7)   # Same day last week
-df['value_lag30'] = df['value'].shift(30) # Same day last month
-
-# Lead features (future values - careful with data leakage!)
-df['value_lead1'] = df['value'].shift(-1)
-```
-
-### 6. Time Differences
-
-```python
-# Time since event
-df['days_since_start'] = (df.index - df.index.min()).days
-
-# Time between events
-df['time_diff'] = df['date'].diff()
-
-# Business days
-from pandas.tseries.offsets import BDay
-df['business_days'] = df['date'].apply(lambda x: len(pd.bdate_range(start_date, x)))
-```
-
-### Complete Time Series Example
-
-```python
-import pandas as pd
-import numpy as np
-
-# Sample data
-dates = pd.date_range('2023-01-01', periods=365, freq='D')
-df = pd.DataFrame({
-    'date': dates,
-    'sales': np.random.randint(100, 1000, 365)
-})
-
-# Set index
-df.set_index('date', inplace=True)
-
-# Extract features
-df['year'] = df.index.year
-df['month'] = df.index.month
-df['day_of_week'] = df.index.dayofweek
-df['is_weekend'] = df.index.dayofweek.isin([5, 6]).astype(int)
-
-# Cyclical encoding
-df['month_sin'] = np.sin(2 * np.pi * df['month'] / 12)
-df['month_cos'] = np.cos(2 * np.pi * df['month'] / 12)
-
-# Rolling features
-df['sales_ma7'] = df['sales'].rolling(window=7).mean()
-df['sales_ma30'] = df['sales'].rolling(window=30).mean()
-
-# Lag features
-df['sales_lag1'] = df['sales'].shift(1)
-df['sales_lag7'] = df['sales'].shift(7)
-
-print(df.head(10))
-```
-
 ---
 
 ## Feature Engineering
@@ -797,10 +614,6 @@ Creating new features from existing data to improve model performance.
 ### 1. Mathematical Transformations
 
 ```python
-# Polynomial features
-df['age_squared'] = df['age'] ** 2
-df['age_cubed'] = df['age'] ** 3
-
 # Interaction features
 df['age_income_interaction'] = df['age'] * df['income']
 
@@ -832,38 +645,7 @@ df['age_category'] = pd.cut(df['age'], bins=bins, labels=labels)
 df['income_quartile'] = pd.qcut(df['income'], q=4, labels=['Q1', 'Q2', 'Q3', 'Q4'])
 ```
 
-### 3. Aggregation Features
-
-```python
-# Group statistics
-df['avg_income_by_city'] = df.groupby('city')['income'].transform('mean')
-df['max_age_by_dept'] = df.groupby('department')['age'].transform('max')
-df['count_by_category'] = df.groupby('category')['id'].transform('count')
-
-# Multiple aggregations
-agg_features = df.groupby('user_id').agg({
-    'purchase_amount': ['sum', 'mean', 'std', 'count'],
-    'days_since_last': 'min'
-})
-```
-
-### 4. Text Features
-
-```python
-# String length
-df['name_length'] = df['name'].str.len()
-
-# Word count
-df['description_words'] = df['description'].str.split().str.len()
-
-# Contains keyword
-df['has_premium'] = df['description'].str.contains('premium', case=False).astype(int)
-
-# Extract patterns
-df['phone_area_code'] = df['phone'].str.extract(r'(\d{3})-')
-```
-
-### 5. Domain-Specific Features
+### 2. Domain-Specific Features
 
 ```python
 # Example: E-commerce
@@ -1138,72 +920,7 @@ print("\nSize ordinal encoded:\n", df[['size', 'size_encoded']])
 
 ---
 
-### Exercise 5: Time Series Feature Engineering
-
-**Task**: Extract and engineer time-based features.
-
-```python
-import pandas as pd
-import numpy as np
-
-# Create time series dataset
-dates = pd.date_range('2023-01-01', periods=100, freq='D')
-data = {
-    'date': dates,
-    'sales': np.random.randint(100, 500, 100) + np.sin(np.arange(100) * 2 * np.pi / 7) * 50
-}
-df = pd.DataFrame(data)
-```
-
-**Questions**:
-1. Extract year, month, day, and day_of_week from 'date'
-2. Create a binary feature 'is_weekend'
-3. Apply cyclical encoding to 'day_of_week' (sine and cosine)
-4. Create a 7-day rolling average of 'sales'
-5. Create lag features for 'sales' (lag 1 and lag 7)
-6. Calculate the percentage change in sales from the previous day
-
-<details>
-<summary><b>Solution</b></summary>
-
-```python
-import pandas as pd
-import numpy as np
-
-# Set date as index
-df.set_index('date', inplace=True)
-
-# 1. Extract date components
-df['year'] = df.index.year
-df['month'] = df.index.month
-df['day'] = df.index.day
-df['day_of_week'] = df.index.dayofweek
-
-# 2. Binary weekend feature
-df['is_weekend'] = df.index.dayofweek.isin([5, 6]).astype(int)
-
-# 3. Cyclical encoding
-df['dow_sin'] = np.sin(2 * np.pi * df['day_of_week'] / 7)
-df['dow_cos'] = np.cos(2 * np.pi * df['day_of_week'] / 7)
-
-# 4. Rolling average
-df['sales_ma7'] = df['sales'].rolling(window=7).mean()
-
-# 5. Lag features
-df['sales_lag1'] = df['sales'].shift(1)
-df['sales_lag7'] = df['sales'].shift(7)
-
-# 6. Percentage change
-df['sales_pct_change'] = df['sales'].pct_change() * 100
-
-print(df.head(10))
-print("\nColumns:", df.columns.tolist())
-```
-</details>
-
----
-
-### Exercise 6: Advanced Data Cleaning Pipeline
+### Exercise 5: Advanced Data Cleaning Pipeline
 
 **Task**: Build a complete preprocessing pipeline.
 
@@ -1306,7 +1023,7 @@ print(df_cleaned.isnull().sum())
 
 ---
 
-### Exercise 7: Feature Engineering Challenge
+### Exercise 6: Feature Engineering Challenge
 
 **Task**: Create meaningful features for a machine learning model.
 
