@@ -1259,15 +1259,15 @@ def clean_data(df):
     df_clean.loc[(df_clean['age'] < 0) | (df_clean['age'] > 120), 'age'] = np.nan
     
     # 3. Remove income outliers using IQR
-
-![outilers_illustration](images/outliers_illustration.png)
+    # ![outilers_illustration](images/outliers_illustration.png)
+<img src="images/outliers_illustration.png">
 
     Q1 = df_clean['income'].quantile(0.25)
     Q3 = df_clean['income'].quantile(0.75)
     IQR = Q3 - Q1
     lower_bound = Q1 - 1.5 * IQR
     upper_bound = Q3 + 1.5 * IQR
-    
+
     outlier_mask = (df_clean['income'] < lower_bound) | (df_clean['income'] > upper_bound)
     print(f"Removed {outlier_mask.sum()} income outliers")
     df_clean = df_clean[~outlier_mask]
