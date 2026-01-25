@@ -18,7 +18,7 @@
 1. **Exploratory Data Analysis (EDA)**: Understand patterns, trends, and relationships
 2. **Feature Understanding**: Identify correlations and distributions
 3. **Outlier Detection**: Spot anomalies visually
-4. **Model Evaluation**: Assess model performance (confusion matrices, ROC curves)
+4. **Model Evaluation**: Assess model performance
 5. **Communication**: Present findings to stakeholders
 
 ### Key Principles
@@ -68,6 +68,8 @@
 **Best for**: Regression analysis, correlation analysis, clustering visualization
 
 **Example scenario**: Plotting house prices vs. square footage to see if larger houses cost more.
+
+![scatter](images/scatter%20plot.png)
 
 #### Matplotlib Implementation
 
@@ -143,12 +145,13 @@ fig.show()
 **When to use**:
 - Display trends over time (time series data)
 - Show continuous change
-- Compare multiple trends on the same plot
 - Visualize model predictions vs. actual values
 
 **Best for**: Time series analysis, tracking metrics over epochs, trend analysis
 
 **Example scenario**: Plotting training loss and validation loss over epochs during model training.
+
+![Line](images/lineplot.png)
 
 #### Matplotlib Implementation
 
@@ -238,6 +241,8 @@ fig.show()
 **Best for**: Categorical comparisons, model comparison, feature importance ranking
 
 **Example scenario**: Comparing accuracy scores of different machine learning algorithms.
+
+![Bar](images/barplot.png)
 
 #### Matplotlib Implementation
 
@@ -333,6 +338,8 @@ fig.show()
 
 **Example scenario**: Visualizing the distribution of ages in a customer dataset to decide on binning strategy.
 
+![histogram](images/Histogram.jpg)
+
 #### Matplotlib Implementation
 
 ```python
@@ -415,6 +422,8 @@ fig.show()
 - **Line in box**: Median (50th percentile)
 - **Whiskers**: Extend to 1.5 × IQR from quartiles
 - **Points beyond whiskers**: Outliers
+
+![Boxplot](images/boxplot.png)
 
 #### Matplotlib Implementation
 
@@ -510,6 +519,8 @@ fig.show()
 **Best for**: Correlation analysis, confusion matrix visualization, pattern detection in matrices
 
 **Example scenario**: Displaying correlation between features to identify multicollinearity before training a model.
+
+![heatmap](images/heatmap.png.webp)
 
 #### Matplotlib Implementation
 
@@ -612,6 +623,8 @@ fig.show()
 > [!NOTE]
 > Pair plots are primarily a Seaborn specialty. Matplotlib and Plotly require more manual setup.
 
+![pair](images/pairplot1.webp)
+
 #### Matplotlib Implementation
 
 ```python
@@ -700,103 +713,6 @@ fig = px.scatter_matrix(data,
 fig.update_traces(diagonal_visible=False, showupperhalf=False)
 fig.show()
 ```
-
----
-
-### 8. Violin Plot
-
-**Description**: Combines box plot with kernel density estimation, showing the full distribution shape.
-
-**When to use**:
-- Compare distributions with more detail than box plots
-- Visualize multimodal distributions (multiple peaks)
-- Show probability density at different values
-- Compare distributions across categories
-
-**Best for**: Detailed distribution comparison, identifying multimodality, understanding distribution shape
-
-**Example scenario**: Comparing test score distributions across different teaching methods to see if one produces bimodal results.
-
-**Violin Plot Components**:
-- **Width**: Represents density (wider = more data points)
-- **Inner box**: Shows quartiles (like box plot)
-- **White dot**: Median
-
-#### Matplotlib Implementation
-
-```python
-import matplotlib.pyplot as plt
-import numpy as np
-
-# Sample data
-np.random.seed(42)
-data = [np.concatenate([np.random.normal(70, 10, 100), np.random.normal(90, 5, 50)]),
-        np.random.normal(75, 12, 150),
-        np.random.normal(85, 8, 150)]
-
-# Create violin plot
-plt.figure(figsize=(10, 6))
-parts = plt.violinplot(data, positions=[1, 2, 3], showmeans=True, showmedians=True)
-plt.xticks([1, 2, 3], ['Method A', 'Method B', 'Method C'])
-plt.ylabel('Test Score')
-plt.title('Test Score Distribution by Teaching Method - Matplotlib')
-plt.grid(axis='y', alpha=0.3)
-plt.show()
-```
-
-#### Seaborn Implementation
-
-```python
-import seaborn as sns
-import pandas as pd
-import numpy as np
-
-# Sample data
-np.random.seed(42)
-data = pd.DataFrame({
-    'Method': np.repeat(['Method A', 'Method B', 'Method C'], 150),
-    'Score': np.concatenate([
-        np.concatenate([np.random.normal(70, 10, 100), np.random.normal(90, 5, 50)]),
-        np.random.normal(75, 12, 150),
-        np.random.normal(85, 8, 150)
-    ])
-})
-
-# Create violin plot
-plt.figure(figsize=(10, 6))
-sns.violinplot(data=data, x='Method', y='Score', palette='muted', inner='box')
-plt.ylabel('Test Score')
-plt.title('Test Score Distribution by Teaching Method - Seaborn')
-plt.grid(axis='y', alpha=0.3)
-plt.show()
-```
-
-#### Plotly Implementation
-
-```python
-import plotly.express as px
-import pandas as pd
-import numpy as np
-
-# Sample data
-np.random.seed(42)
-data = pd.DataFrame({
-    'Method': np.repeat(['Method A', 'Method B', 'Method C'], 150),
-    'Score': np.concatenate([
-        np.concatenate([np.random.normal(70, 10, 100), np.random.normal(90, 5, 50)]),
-        np.random.normal(75, 12, 150),
-        np.random.normal(85, 8, 150)
-    ])
-})
-
-# Create violin plot
-fig = px.violin(data, x='Method', y='Score',
-                title='Test Score Distribution by Teaching Method - Plotly',
-                box=True, points='outliers', color='Method')
-fig.show()
-```
-
----
 
 ## NumPy Fundamentals
 
