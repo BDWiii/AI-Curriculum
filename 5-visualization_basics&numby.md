@@ -1043,27 +1043,6 @@ print("Using @:\n", A @ B)
 
 # Transpose
 print("Transpose:\n", A.T)
-
-# Determinant
-det = np.linalg.det(A)
-print("Determinant:", det)  # -2.0
-
-# Inverse
-inv = np.linalg.inv(A)
-print("Inverse:\n", inv)
-print("Verify A @ inv(A):\n", A @ inv)  # Should be identity
-
-# Eigenvalues and eigenvectors
-eigenvalues, eigenvectors = np.linalg.eig(A)
-print("Eigenvalues:", eigenvalues)
-print("Eigenvectors:\n", eigenvectors)
-
-# Solving linear systems: Ax = b
-A = np.array([[3, 1], [1, 2]])
-b = np.array([9, 8])
-x = np.linalg.solve(A, b)
-print("Solution:", x)  # [2., 3.]
-print("Verify:", A @ x)  # Should equal b
 ```
 
 ---
@@ -1292,160 +1271,7 @@ plt.show()
 
 ---
 
-### Question 6: NumPy Broadcasting
-
-What will be the output shape and values of the following operation?
-
-```python
-import numpy as np
-
-A = np.array([[1, 2, 3],
-              [4, 5, 6]])  # Shape: (2, 3)
-
-B = np.array([10, 20, 30])  # Shape: (3,)
-
-result = A + B
-```
-
-<details>
-<summary><b>Answer</b></summary>
-
-**Output shape**: `(2, 3)`
-
-**Output values**:
-```
-[[11, 22, 33],
- [14, 25, 36]]
-```
-
-**Explanation**:
-1. `A` has shape `(2, 3)`
-2. `B` has shape `(3,)` which is interpreted as `(1, 3)`
-3. Broadcasting expands `B` to shape `(2, 3)` by repeating: `[[10, 20, 30], [10, 20, 30]]`
-4. Element-wise addition:
-   - Row 1: `[1+10, 2+20, 3+30]` = `[11, 22, 33]`
-   - Row 2: `[4+10, 5+20, 6+30]` = `[14, 25, 36]`
-
-**Key concept**: Broadcasting allows operations on arrays of different shapes by virtually replicating the smaller array.
-</details>
-
----
-
-### Question 7: NumPy Aggregation
-
-Given the following array, calculate the mean of each column and then subtract it from the original array (column-wise centering):
-
-```python
-import numpy as np
-
-data = np.array([[1, 2, 3],
-                 [4, 5, 6],
-                 [7, 8, 9]])
-```
-
-<details>
-<summary><b>Answer</b></summary>
-
-```python
-import numpy as np
-
-data = np.array([[1, 2, 3],
-                 [4, 5, 6],
-                 [7, 8, 9]])
-
-# Calculate column means
-col_means = data.mean(axis=0)  # [4., 5., 6.]
-
-# Subtract from original (broadcasting!)
-centered = data - col_means
-
-print("Column means:", col_means)
-print("Centered data:\n", centered)
-```
-
-**Output**:
-```
-Column means: [4. 5. 6.]
-Centered data:
-[[-3. -3. -3.]
- [ 0.  0.  0.]
- [ 3.  3.  3.]]
-```
-
-**Explanation**:
-- `axis=0` means aggregate across rows (resulting in column statistics)
-- Broadcasting automatically expands `col_means` from shape `(3,)` to `(3, 3)` for subtraction
-- Each column now has mean = 0 (centered)
-
-**Verification**:
-```python
-print("New column means:", centered.mean(axis=0))  # [0., 0., 0.]
-```
-</details>
-
----
-
-### Question 8: Choosing Between Libraries
-
-For each scenario, choose the best visualization library (matplotlib, seaborn, or plotly):
-
-a) Creating a quick correlation heatmap for a research paper  
-b) Building an interactive dashboard for business stakeholders  
-c) Fine-tuning every aspect of a publication-quality figure  
-d) Exploring relationships in a dataset with pair plots  
-
-<details>
-<summary><b>Answer</b></summary>
-
-**a) Seaborn**
-- Built-in `heatmap()` function with beautiful defaults
-- Perfect for statistical visualizations
-- Minimal code required
-
-```python
-sns.heatmap(df.corr(), annot=True, cmap='coolwarm')
-```
-
-**b) Plotly**
-- Interactive plots with hover, zoom, pan
-- Web-based, easy to embed in dashboards
-- Professional look for presentations
-
-```python
-fig = px.scatter(df, x='x', y='y', hover_data=['details'])
-fig.show()
-```
-
-**c) Matplotlib**
-- Complete control over every element
-- Highly customizable
-- Industry standard for publications
-
-```python
-fig, ax = plt.subplots()
-ax.plot(x, y)
-ax.set_xlabel('X', fontsize=12, fontweight='bold')
-# ... fine-tune everything
-```
-
-**d) Seaborn**
-- `pairplot()` function specifically designed for this
-- Automatic grid layout
-- Can color by category
-
-```python
-sns.pairplot(df, hue='category')
-```
-
-**General rule**:
-- **Quick statistical plots**: Seaborn
-- **Complete control**: Matplotlib
-- **Interactivity**: Plotly
-</details>
-
----
-
-### Question 9: NumPy Indexing Challenge
+### Question 6: NumPy Indexing Challenge
 
 Given the following array, extract all elements greater than 5:
 
@@ -1497,7 +1323,7 @@ After replacement:
 
 ---
 
-### Question 10: Real-World Scenario
+### Question 7: Real-World Scenario
 
 You're analyzing a time series dataset of daily sales over 2 years. You want to:
 1. Visualize the overall trend
