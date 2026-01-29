@@ -1410,7 +1410,6 @@ fig.show()
 | **Box Plot** | Distribution comparison, outliers | Multi-group comparison, outlier detection |
 | **Heatmap** | Matrix data, correlations | Correlation matrix, confusion matrix |
 | **Pair Plot** | Multivariate relationships | Initial EDA, feature selection |
-| **Violin Plot** | Detailed distribution comparison | Multimodal distributions |
 
 ### NumPy Quick Reference
 
