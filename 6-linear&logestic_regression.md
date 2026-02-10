@@ -99,21 +99,21 @@ Linear Regression is a supervised learning algorithm used to predict a **continu
 
 For a single feature (simple linear regression):
 
-$$h_w(x) = w_0 + w_1 x$$
+$$h_{w,b}(x) = wx + b$$
 
 For multiple features (multiple linear regression):
 
-$$h_w(x) = w_0 + w_1 x_1 + w_2 x_2 + ... + w_n x_n$$
+$$h_{w,b}(x) = w_1 x_1 + w_2 x_2 + \dots + w_n x_n + b$$
 
 In vectorized form:
 
-$$h_w(x) = w^T x$$
+$$h_{w,b}(x) = w^T x + b$$
 
 Where:
-- $h_w(x)$ is the predicted output (hypothesis)
-- $w_0$ is the bias term (y-intercept)
-- $w_1, w_2, ..., w_n$ are the weights (slopes)
-- $x_1, x_2, ..., x_n$ are the input features
+- $h_{w,b}(x)$ is the predicted output (hypothesis)
+- $b$ is the bias term (y-intercept)
+- $w_1, w_2, \dots, w_n$ are the weights (slopes)
+- $x_1, x_2, \dots, x_n$ are the input features
 
 ### Intuition
 
@@ -121,7 +121,7 @@ Think of linear regression as fitting a straight line (in 2D) or hyperplane (in 
 
 ```mermaid
 graph LR
-    A[Input Features<br/>x₁, x₂, ..., xₙ] --> B[Weighted Sum<br/>w₀ + w₁x₁ + ... + wₙxₙ]
+    A[Input Features<br/>x₁, x₂, ..., xₙ] --> B[Weighted Sum<br/>w₁x₁ + ... + wₙxₙ + b]
     B --> C[Prediction<br/>ŷ continuous value]
     D[True Value y] -.Compare.- C
     C -.Error.- E[Cost Function<br/>MSE]
@@ -131,19 +131,19 @@ graph LR
 
 **Formula**:
 
-$$J(w) = \frac{1}{2m} \sum_{i=1}^{m} (h_w(x^{(i)}) - y^{(i)})^2$$
+$$J(w,b) = \frac{1}{2m} \sum_{i=1}^{m} (h_{w,b}(x^{(i)}) - y^{(i)})^2$$
 
 Where:
-- $J(w)$ is the cost function
+- $J(w,b)$ is the cost function
 - $m$ is the number of training examples
-- $h_w(x^{(i)})$ is the predicted value for the i-th example
+- $h_{w,b}(x^{(i)})$ is the predicted value for the i-th example
 - $y^{(i)}$ is the actual value for the i-th example
 
 **Intuition**:
 - MSE measures the average squared difference between predictions and actual values
 - Squaring ensures positive values and penalizes larger errors more heavily
 - The factor $\frac{1}{2m}$ is for mathematical convenience (simplifies the derivative)
-- **Goal**: Find $w$ values that minimize $J(w)$
+- **Goal**: Find $w$ and $b$ values that minimize $J(w,b)$
 
 ### Gradient Descent Algorithm
 
@@ -151,29 +151,31 @@ Gradient descent is an optimization algorithm used to minimize the cost function
 
 **Update Rule**:
 
-$$w_j := w_j - \alpha \frac{\partial}{\partial w_j} J(w)$$
+$$w_j := w_j - \alpha \frac{\partial}{\partial w_j} J(w,b)$$
+$$b := b - \alpha \frac{\partial}{\partial b} J(w,b)$$
 
 For linear regression, the partial derivative is:
 
-$$\frac{\partial}{\partial w_j} J(w) = \frac{1}{m} \sum_{i=1}^{m} (h_w(x^{(i)}) - y^{(i)}) x_j^{(i)}$$
+$$\frac{\partial}{\partial w_j} J(w,b) = \frac{1}{m} \sum_{i=1}^{m} (h_{w,b}(x^{(i)}) - y^{(i)}) x_j^{(i)}$$
+$$\frac{\partial}{\partial b} J(w,b) = \frac{1}{m} \sum_{i=1}^{m} (h_{w,b}(x^{(i)}) - y^{(i)})$$
 
-**Complete Update Formula**:
-
-$$w_j := w_j - \alpha \frac{1}{m} \sum_{i=1}^{m} (h_w(x^{(i)}) - y^{(i)}) x_j^{(i)}$$
+$$w_j := w_j - \alpha \frac{1}{m} \sum_{i=1}^{m} (h_{w,b}(x^{(i)}) - y^{(i)}) x_j^{(i)}$$
+$$b := b - \alpha \frac{1}{m} \sum_{i=1}^{m} (h_{w,b}(x^{(i)}) - y^{(i)})$$
 
 **Vectorized Form**:
 
-$$w := w - \alpha \frac{1}{m} X^T (Xw - y)$$
+$$w := w - \alpha \frac{1}{m} X^T (Xw + b - y)$$
+$$b := b - \alpha \frac{1}{m} \sum_{i=1}^m (Xw + b - y)$$
 
 ```mermaid
 graph TD
-    A[Initialize w randomly] --> B[Calculate predictions<br/>h_wx]
-    B --> C[Compute cost J_w]
-    C --> D[Calculate gradients<br/>∂J/∂w]
-    D --> E[Update parameters<br/>w := w - α∇J]
+    A[Initialize w, b randomly] --> B[Calculate predictions<br/>h_w,b(x)]
+    B --> C[Compute cost J(w,b)]
+    C --> D[Calculate gradients<br/>∂J/∂w, ∂J/∂b]
+    D --> E[Update parameters<br/>w := w - α∂J/∂w<br/>b := b - α∂J/∂b]
     E --> F{Converged?}
     F -->|No| B
-    F -->|Yes| G[Optimal w found!]
+    F -->|Yes| G[Optimal w, b found!]
     
     style G fill:#4CAF50
 ```
@@ -227,7 +229,7 @@ Logistic Regression is a supervised learning algorithm used for **binary classif
 
 For logistic regression, we want outputs between 0 and 1 (probabilities), so we use the **sigmoid function**:
 
-$$h_w(x) = g(w^T x) = \frac{1}{1 + e^{-w^T x}}$$
+$$h_{w,b}(x) = g(w^T x + b) = \frac{1}{1 + e^{-(w^T x + b)}}$$
 
 Where $g(z)$ is the sigmoid (logistic) function:
 
@@ -242,11 +244,11 @@ $$g(z) = \frac{1}{1 + e^{-z}}$$
 
 ### Decision Boundary
 
-The decision boundary is where $h_w(x) = 0.5$, which occurs when $w^T x = 0$.
+The decision boundary is where $h_{w,b}(x) = 0.5$, which occurs when $w^T x + b = 0$.
 
 **Prediction Rule**:
-- Predict $y = 1$ if $h_w(x) \geq 0.5$ (i.e., $w^T x \geq 0$)
-- Predict $y = 0$ if $h_w(x) < 0.5$ (i.e., $w^T x < 0$)
+- Predict $y = 1$ if $h_{w,b}(x) \geq 0.5$ (i.e., $w^T x + b \geq 0$)
+- Predict $y = 0$ if $h_{w,b}(x) < 0.5$ (i.e., $w^T x + b < 0$)
 
 ### Cost Function (Log Loss / Binary Cross-Entropy)
 
@@ -254,14 +256,14 @@ We cannot use MSE for logistic regression because it would be non-convex (multip
 
 **Formula**:
 
-$$J(w) = -\frac{1}{m} \sum_{i=1}^{m} \left[ y^{(i)} \log(h_w(x^{(i)})) + (1 - y^{(i)}) \log(1 - h_w(x^{(i)})) \right]$$
+$$J(w,b) = -\frac{1}{m} \sum_{i=1}^{m} \left[ y^{(i)} \log(h_{w,b}(x^{(i)})) + (1 - y^{(i)}) \log(1 - h_{w,b}(x^{(i)})) \right]$$
 
 **Intuition**:
-- When $y = 1$: Cost = $-\log(h_w(x))$
+- When $y = 1$: Cost = $-\log(h_{w,b}(x))$
   - If prediction is close to 1: Very low cost
   - If prediction is close to 0: Very high cost (approaches infinity)
   
-- When $y = 0$: Cost = $-\log(1 - h_w(x))$
+- When $y = 0$: Cost = $-\log(1 - h_{w,b}(x))$
   - If prediction is close to 0: Very low cost
   - If prediction is close to 1: Very high cost (approaches infinity)
 
@@ -274,19 +276,21 @@ This cost function heavily penalizes wrong predictions while being convex (singl
 
 **Update Rule** (same form as linear regression!):
 
-$$w_j := w_j - \alpha \frac{\partial}{\partial w_j} J(w)$$
+$$w_j := w_j - \alpha \frac{\partial}{\partial w_j} J(w,b)$$
+$$b := b - \alpha \frac{\partial}{\partial b} J(w,b)$$
 
 The partial derivative is:
 
-$$\frac{\partial}{\partial w_j} J(w) = \frac{1}{m} \sum_{i=1}^{m} (h_w(x^{(i)}) - y^{(i)}) x_j^{(i)}$$
+$$\frac{\partial}{\partial w_j} J(w,b) = \frac{1}{m} \sum_{i=1}^{m} (h_{w,b}(x^{(i)}) - y^{(i)}) x_j^{(i)}$$
+$$\frac{\partial}{\partial b} J(w,b) = \frac{1}{m} \sum_{i=1}^{m} (h_{w,b}(x^{(i)}) - y^{(i)})$$
 
-**Complete Update Formula**:
-
-$$w_j := w_j - \alpha \frac{1}{m} \sum_{i=1}^{m} (h_w(x^{(i)}) - y^{(i)}) x_j^{(i)}$$
+$$w_j := w_j - \alpha \frac{1}{m} \sum_{i=1}^{m} (h_{w,b}(x^{(i)}) - y^{(i)}) x_j^{(i)}$$
+$$b := b - \alpha \frac{1}{m} \sum_{i=1}^{m} (h_{w,b}(x^{(i)}) - y^{(i)})$$
 
 **Vectorized Form**:
 
-$$w := w - \alpha \frac{1}{m} X^T (g(Xw) - y)$$
+$$w := w - \alpha \frac{1}{m} X^T (g(Xw + b) - y)$$
+$$b := b - \alpha \frac{1}{m} \sum (g(Xw + b) - y)$$
 
 Where $g$ is the sigmoid function applied element-wise.
 
@@ -324,10 +328,10 @@ Let's understand how all these components interact in both algorithms:
 
 ```mermaid
 graph TD
-    A[1. Initialize Parameters w<br/>Random or zeros] --> B[2. Make Predictions<br/>Linear: wᵀx<br/>Logistic: σwᵀx]
+    A[1. Initialize Parameters w, b<br/>Random or zeros] --> B[2. Make Predictions<br/>Linear: wᵀx + b<br/>Logistic: σ(wᵀx + b)]
     B --> C[3. Calculate Cost<br/>Linear: MSE<br/>Logistic: Log Loss]
-    C --> D[4. Compute Gradients<br/>∂J/∂wⱼ = 1/m ΣX error]
-    D --> E[5. Update Parameters<br/>wⱼ := wⱼ - α∇J]
+    C --> D[4. Compute Gradients<br/>∂J/∂wⱼ, ∂J/∂b]
+    D --> E[5. Update Parameters<br/>wⱼ := wⱼ - α∂J/∂wⱼ<br/>b := b - α∂J/∂b]
     E --> F{6. Converged?<br/>Cost change < ε<br/>or Max iterations}
     F -->|No| B
     F -->|Yes| G[7. Optimal Model!<br/>Make predictions on new data]
@@ -348,12 +352,12 @@ graph TD
    - Feature scaling (normalize or standardize)
 
 #### 2. **Model Initialization**
-   - Initialize parameters $w$ (typically to small random values or zeros)
+   - Initialize parameters $w$ and $b$ (typically to small random values or zeros)
    - Set hyperparameters (learning rate $\alpha$, iterations)
 
 #### 3. **Forward Propagation**
-   - **Linear Regression**: $h_w(x) = w^T x$
-   - **Logistic Regression**: $h_w(x) = \sigma(w^T x)$
+   - **Linear Regression**: $h_{w,b}(x) = w^T x + b$
+   - **Logistic Regression**: $h_{w,b}(x) = \sigma(w^T x + b)$
 
 #### 4. **Cost Calculation**
    - Measure how wrong predictions are
@@ -361,7 +365,7 @@ graph TD
    - **Logistic**: Log Loss penalizes confident wrong predictions severely
 
 #### 5. **Backward Propagation (Gradient Calculation)**
-   - Calculate $\frac{\partial J}{\partial w_j}$ for each parameter
+   - Calculate $\frac{\partial J}{\partial w_j}$ and $\frac{\partial J}{\partial b}$ for each parameter
    - This tells us the direction of steepest ascent
    - We move in the opposite direction (descent)
 
@@ -372,8 +376,8 @@ graph TD
 
 #### 7. **Prediction**
    - Use learned $w$ to predict on new data
-   - **Linear**: Direct output is prediction
-   - **Logistic**: Apply threshold (typically 0.5) to probability
+   - **Linear**: Output $h_{w,b}(x)$ is prediction
+   - **Logistic**: Apply threshold (typically 0.5) to probability $h_{w,b}(x)$
 
 ### Learning Rate: The Critical Hyperparameter
 
@@ -505,7 +509,7 @@ def compare_learning_rates(X, y, learning_rates, iterations=1000):
         plt.plot(model.cost_history, label=f'α = {lr}')
     
     plt.xlabel('Iteration')
-    plt.ylabel('Cost J(w)')
+    plt.ylabel('Cost J(w,b)')
     plt.title('Learning Rate Comparison')
     plt.legend()
     plt.grid(True)
@@ -536,10 +540,10 @@ results = compare_learning_rates(X, y, learning_rates, iterations=500)
 **Challenge**: Derive the gradient of the cost function for linear regression.
 
 Given:
-- Cost function: $J(w) = \frac{1}{2m} \sum_{i=1}^{m} (h_w(x^{(i)}) - y^{(i)})^2$
-- Hypothesis: $h_w(x) = w^T x$
+- Cost function: $J(w,b) = \frac{1}{2m} \sum_{i=1}^{m} (h_{w,b}(x^{(i)}) - y^{(i)})^2$
+- Hypothesis: $h_{w,b}(x) = w^T x + b$
 
-Derive: $\frac{\partial J}{\partial w_j}$
+Derive: $\frac{\partial J}{\partial w_j}$ and $\frac{\partial J}{\partial b}$
 
 **Steps to follow**:
 1. Substitute the hypothesis into the cost function
@@ -549,19 +553,21 @@ Derive: $\frac{\partial J}{\partial w_j}$
 <details>
 <summary>✅ Solution</summary>
 
-$$\frac{\partial J}{\partial w_j} = \frac{\partial}{\partial w_j} \left[ \frac{1}{2m} \sum_{i=1}^{m} (h_w(x^{(i)}) - y^{(i)})^2 \right]$$
+$$\frac{\partial J}{\partial w_j} = \frac{\partial}{\partial w_j} \left[ \frac{1}{2m} \sum_{i=1}^{m} (h_{w,b}(x^{(i)}) - y^{(i)})^2 \right]$$
 
 Apply chain rule:
 
-$$= \frac{1}{2m} \sum_{i=1}^{m} 2(h_w(x^{(i)}) - y^{(i)}) \cdot \frac{\partial}{\partial w_j} h_w(x^{(i)})$$
+$$= \frac{1}{2m} \sum_{i=1}^{m} 2(h_{w,b}(x^{(i)}) - y^{(i)}) \cdot \frac{\partial}{\partial w_j} h_{w,b}(x^{(i)})$$
 
-Since $h_w(x^{(i)}) = \sum_{k=0}^{n} w_k x_k^{(i)}$:
+Since $h_{w,b}(x^{(i)}) = \sum_{k=1}^{n} w_k x_k^{(i)} + b$:
 
-$$\frac{\partial}{\partial w_j} h_w(x^{(i)}) = x_j^{(i)}$$
+$$\frac{\partial}{\partial w_j} h_{w,b}(x^{(i)}) = x_j^{(i)}$$
+$$\frac{\partial}{\partial b} h_{w,b}(x^{(i)}) = 1$$
 
 Therefore:
 
-$$= \frac{1}{m} \sum_{i=1}^{m} (h_w(x^{(i)}) - y^{(i)}) x_j^{(i)}$$
+$$\frac{\partial J}{\partial w_j} = \frac{1}{m} \sum_{i=1}^{m} (h_{w,b}(x^{(i)}) - y^{(i)}) x_j^{(i)}$$
+$$\frac{\partial J}{\partial b} = \frac{1}{m} \sum_{i=1}^{m} (h_{w,b}(x^{(i)}) - y^{(i)})$$
 
 This is exactly the gradient we use in our update rule!
 </details>
@@ -624,14 +630,15 @@ This is exactly the gradient we use in our update rule!
 **Problem**: A student implemented logistic regression but the cost is increasing instead of decreasing. Here's their code:
 
 ```python
-def buggy_gradient_descent(X, y, w, alpha, iterations):
+def buggy_gradient_descent(X, y, w, b, alpha, iterations):
     m = len(y)
     for i in range(iterations):
-        z = X.dot(w)
+        z = X.dot(w) + b
         predictions = 1 / (1 + np.exp(-z))
         errors = predictions - y
-        w = w + alpha * (1/m) * X.T.dot(errors)  # Bug here!
-    return w
+        w = w + alpha * (1/m) * X.T.dot(errors)  # Bug 1: plus instead of minus
+        b = b - alpha * (1/m) * np.sum(errors)   # b update is correct
+    return w, b
 ```
 
 **Questions**:
@@ -642,24 +649,25 @@ def buggy_gradient_descent(X, y, w, alpha, iterations):
 <details>
 <summary>✅ Answer</summary>
 
-1. **The bug**: The line `w = w + alpha * ...` should be `w = w - alpha * ...` (minus, not plus)
+1. **The bug**: The line `w = w + alpha * ...` should be `w = w - alpha * ...` (minus, not plus) to move in the direction that minimizes the cost.
 
 2. **Why cost increases**: 
-   - Gradient descent should move in the direction opposite to the gradient (downhill)
-   - The gradient points in the direction of steepest ascent
+   - Gradient descent should move in the direction opposite to the gradient (downhill).
+   - The gradient points in the direction of steepest ascent.
    - By adding instead of subtracting, we're moving uphill, increasing the cost!
-   - This is called **gradient ascent** instead of descent
+   - This is called **gradient ascent** instead of descent.
 
 3. **Fixed code**:
 ```python
-def fixed_gradient_descent(X, y, w, alpha, iterations):
+def fixed_gradient_descent(X, y, w, b, alpha, iterations):
     m = len(y)
     for i in range(iterations):
-        z = X.dot(w)
+        z = X.dot(w) + b
         predictions = 1 / (1 + np.exp(-z))
         errors = predictions - y
         w = w - alpha * (1/m) * X.T.dot(errors)  # Fixed: minus sign
-    return w
+        b = b - alpha * (1/m) * np.sum(errors)
+    return w, b
 ```
 </details>
 
@@ -742,10 +750,10 @@ print(predictions)
 |--------|------------------|---------------------|
 | **Purpose** | Predict continuous values | Predict binary classes |
 | **Output Range** | $(-\infty, +\infty)$ | $(0, 1)$ (probability) |
-| **Hypothesis** | $h_w(x) = w^T x$ | $h_w(x) = \frac{1}{1 + e^{-w^T x}}$ |
+| **Hypothesis** | $h_{w,b}(x) = w^T x + b$ | $h_{w,b}(x) = \sigma(w^T x + b)$ |
 | **Cost Function** | Mean Squared Error (MSE) | Log Loss (Binary Cross-Entropy) |
-| **Cost Formula** | $\frac{1}{2m} \sum (h_w(x^{(i)}) - y^{(i)})^2$ | $-\frac{1}{m} \sum [y^{(i)} \log(h_w(x^{(i)})) + (1-y^{(i)}) \log(1-h_w(x^{(i)}))]$ |
-| **Gradient** | $\frac{1}{m} X^T (Xw - y)$ | $\frac{1}{m} X^T (g(Xw) - y)$ |
+| **Cost Formula** | $\frac{1}{2m} \sum (h_{w,b}(x^{(i)}) - y^{(i)})^2$ | $-\frac{1}{m} \sum [y^{(i)} \log(h_{w,b}(x^{(i)})) + (1-y^{(i)}) \log(1-h_{w,b}(x^{(i)}))]$ |
+| **Gradient** | $\frac{\partial J}{\partial w} = \frac{1}{m} X^T (Xw + b - y)$ | $\frac{\partial J}{\partial w} = \frac{1}{m} X^T (g(Xw + b) - y)$ |
 | **Examples** | House prices, temperature, sales | Spam detection, disease diagnosis, churn prediction |
 | **Evaluation Metrics** | MSE, RMSE, MAE, R² | Accuracy, Precision, Recall, F1, AUC-ROC |
 
@@ -759,8 +767,8 @@ print(predictions)
 1. **Supervised Learning**: Both algorithms learn from labeled data to make predictions on unseen data
 
 2. **Hypothesis Function**: 
-   - Linear: Direct weighted sum
-   - Logistic: Weighted sum passed through sigmoid
+   - Linear: $wx + b$
+   - Logistic: Sigmoid of $(wx + b)$
 
 3. **Cost Functions**:
    - Must be convex for reliable gradient descent
@@ -784,7 +792,7 @@ print(predictions)
    - Normalization or standardization
 
 7. **The Beautiful Connection**:
-   - Both use gradient descent with nearly identical update rules
+   - Both use gradient descent with nearly identical update rules for $w$ and $b$
    - The main difference is the hypothesis function (linear vs sigmoid)
    - This pattern extends to neural networks!
 
