@@ -42,7 +42,6 @@ Before diving into the algorithms, let's understand where they fit in the machin
    - Image classification (cat/dog/bird)
 
 ![Data Example](images/House%20prices.png)
-![Graph Example](images/house%20pricing%20graph.jpg)
 
 
 ### Unsupervised Learning
@@ -144,6 +143,10 @@ Where:
 - Squaring ensures positive values and penalizes larger errors more heavily
 - The factor $\frac{1}{2m}$ is for mathematical convenience (simplifies the derivative)
 - **Goal**: Find $w$ and $b$ values that minimize $J(w,b)$
+
+![Graph Example](images/house%20pricing%20graph.jpg)
+
+---
 
 ### Gradient Descent Algorithm
 
