@@ -41,6 +41,10 @@ Before diving into the algorithms, let's understand where they fit in the machin
    - Customer churn prediction (will churn/won't churn)
    - Image classification (cat/dog/bird)
 
+![Data Example](images/House%20prices.png)
+![Graph Example](images/house%20pricing%20graph.jpg)
+
+
 ### Unsupervised Learning
 
 **Definition**: Learning from unlabeled data where we only have input features (X). The algorithm discovers hidden patterns or structures.
@@ -66,6 +70,9 @@ Before diving into the algorithms, let's understand where they fit in the machin
 3. **Association Rules**
    - Market basket analysis (products bought together)
    - Recommendation systems
+
+![Data Example](images/clustered%20data.png)
+![Graph Example](images/Clustered%20graph.png)
 
 ```mermaid
 graph TD
