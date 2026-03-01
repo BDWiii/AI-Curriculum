@@ -210,53 +210,6 @@ Visual summary:
 
 ---
 
-## 🔧 How to Diagnose: Learning Curves
-
-The single best tool for diagnosing bias vs variance is the **learning curve**: plot training error and validation error as **training set size** increases.
-
-```python
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.linear_model import LinearRegression
-from sklearn.preprocessing import PolynomialFeatures
-from sklearn.pipeline import Pipeline
-from sklearn.model_selection import learning_curve
-
-np.random.seed(42)
-
-# True function: y = 0.5x^2 + 2 + noise
-X = np.sort(np.random.rand(200, 1) * 10 - 2, axis=0)
-y = 0.5 * X.ravel()**2 + 2 + np.random.randn(200) * 0.8
-
-fig, axes = plt.subplots(1, 3, figsize=(17, 5))
-
-configs = [
-    ("High Bias (degree=1)",  Pipeline([("poly", PolynomialFeatures(1)), ("lr", LinearRegression())])),
-    ("Good Fit (degree=2)",   Pipeline([("poly", PolynomialFeatures(2)), ("lr", LinearRegression())])),
-    ("High Variance (deg=9)", Pipeline([("poly", PolynomialFeatures(9)), ("lr", LinearRegression())])),
-]
-
-for ax, (title, model) in zip(axes, configs):
-    train_sizes, train_scores, val_scores = learning_curve(
-        model, X, y, cv=5,
-        train_sizes=np.linspace(0.1, 1.0, 10),
-        scoring="neg_mean_squared_error"
-    )
-    train_err = -train_scores.mean(axis=1)
-    val_err   = -val_scores.mean(axis=1)
-
-    ax.plot(train_sizes, train_err, 'o-', color='blue',  label="Training error")
-    ax.plot(train_sizes, val_err,   'o-', color='orange', label="Validation error")
-    ax.set_title(title, fontsize=11)
-    ax.set_xlabel("Training set size")
-    ax.set_ylabel("MSE")
-    ax.legend()
-    ax.grid(alpha=0.3)
-
-plt.tight_layout()
-plt.show()
-```
-
 ### How to read learning curves
 
 | Pattern | Diagnosis |
